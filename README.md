@@ -4,6 +4,9 @@ reopened-defects-grid
 ## Overview
 
 
+![](https://raw.github.com/wrackzone/reopened-defects-grid/master/screenshot.png)
+
+
 ## License
 
 AppTemplate is released under the MIT license.  See the file [LICENSE](./LICENSE) for the full text.
