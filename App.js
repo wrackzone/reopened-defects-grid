@@ -9,10 +9,8 @@ Ext.define('CustomApp', {
         app = this;
         var store = this.getSnapshotStore();
 
-        var viewport = Ext.create('Ext.Viewport');
-
-        viewport.add({
-             xtype: 'rallygrid',
+        this.add({
+            xtype: 'rallygrid',
              store : store,
              columnCfgs: [
                  {dataIndex:'_UnformattedID',text:"ID"},
@@ -37,16 +35,17 @@ Ext.define('CustomApp', {
         var hydrate = ['_TypeHierarchy','State','Priority','Severity','_PreviousValues'];
         
         var find = {
-                '_TypeHierarchy' : { "$in" : ["Defect"]} ,
-                '_ProjectHierarchy' : { "$in": app.getContext().getProject().ObjectID },
-                'State' : "Open",
-                '_PreviousValues.State' : { "$ne" : null}
+                '_TypeHierarchy' : { "$in" : ["Defect","Task"]} ,
+                '_ProjectHierarchy' : { "$in": app.getContext().getProject().ObjectID }
+                // 'State' : "Open",
+                // '_PreviousValues.State' : { "$ne" : null}
+                // '_PreviousValues.State' : { "$in" : ["Closed","Re-opened"]}
         };
 
         var storeConfig = {
             find : find,
             autoLoad : true,
-            pageSize:1000,
+            pageSize:100,
             limit: 'Infinity',
             fetch: fetch,
             hydrate: hydrate,
