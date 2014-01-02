@@ -9,8 +9,8 @@ Ext.define('CustomApp', {
         app = this;
         var store = this.getSnapshotStore();
 
-        this.add({
-            xtype: 'rallygrid',
+        this.grid = Ext.create('Rally.ui.grid.Grid',{
+            // xtype: 'rallygrid',
              store : store,
              columnCfgs: [
                  {dataIndex:'_UnformattedID',text:"ID"},
@@ -26,6 +26,10 @@ Ext.define('CustomApp', {
              ]
         });
 
+        this.add(this.grid);
+        this.grid.reconfigure(store);
+        store.loadPage(1);
+
     },
 
     getSnapshotStore : function() {
@@ -36,16 +40,17 @@ Ext.define('CustomApp', {
         
         var find = {
                 '_TypeHierarchy' : { "$in" : ["Defect","Task"]} ,
-                '_ProjectHierarchy' : { "$in": app.getContext().getProject().ObjectID }
-                // 'State' : "Open",
+                '_ProjectHierarchy' : { "$in": app.getContext().getProject().ObjectID },
+                'State' : "Open",
                 // '_PreviousValues.State' : { "$ne" : null}
-                // '_PreviousValues.State' : { "$in" : ["Closed","Re-opened"]}
+                '_PreviousValues.State' : { "$in" : ["Closed","Re-opened","Fixed"]}
         };
 
         var storeConfig = {
             find : find,
-            autoLoad : true,
-            pageSize:100,
+            // autoLoad : true,
+            showPagingToolbar: true,
+            pageSize : 25,
             limit: 'Infinity',
             fetch: fetch,
             hydrate: hydrate,

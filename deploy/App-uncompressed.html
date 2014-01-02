@@ -3,7 +3,7 @@
 <head>
     <title>reopened-defects-grid</title>
 
-    <script type="text/javascript" src="/apps/2.0rc2/sdk.js"></script>
+    <script type="text/javascript" src="/apps/2.0rc1/sdk.js"></script>
 
     <script type="text/javascript">
         Rally.onReady(function () {
@@ -18,10 +18,8 @@ Ext.define('CustomApp', {
         app = this;
         var store = this.getSnapshotStore();
 
-        var viewport = Ext.create('Ext.Viewport');
-
-        viewport.add({
-             xtype: 'rallygrid',
+        this.grid = Ext.create('Rally.ui.grid.Grid',{
+            // xtype: 'rallygrid',
              store : store,
              columnCfgs: [
                  {dataIndex:'_UnformattedID',text:"ID"},
@@ -37,6 +35,10 @@ Ext.define('CustomApp', {
              ]
         });
 
+        this.add(this.grid);
+        this.grid.reconfigure(store);
+        store.loadPage(1);
+
     },
 
     getSnapshotStore : function() {
@@ -46,16 +48,18 @@ Ext.define('CustomApp', {
         var hydrate = ['_TypeHierarchy','State','Priority','Severity','_PreviousValues'];
         
         var find = {
-                '_TypeHierarchy' : { "$in" : ["Defect"]} ,
+                '_TypeHierarchy' : { "$in" : ["Defect","Task"]} ,
                 '_ProjectHierarchy' : { "$in": app.getContext().getProject().ObjectID },
                 'State' : "Open",
-                '_PreviousValues.State' : { "$ne" : null}
+                // '_PreviousValues.State' : { "$ne" : null}
+                '_PreviousValues.State' : { "$in" : ["Closed","Re-opened","Fixed"]}
         };
 
         var storeConfig = {
             find : find,
-            autoLoad : true,
-            pageSize:1000,
+            // autoLoad : true,
+            showPagingToolbar: true,
+            pageSize : 25,
             limit: 'Infinity',
             fetch: fetch,
             hydrate: hydrate,
