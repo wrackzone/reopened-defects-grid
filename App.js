@@ -13,16 +13,24 @@ Ext.define('CustomApp', {
             // xtype: 'rallygrid',
              store : store,
              columnCfgs: [
-                 {dataIndex:'_UnformattedID',text:"ID"},
+                {dataIndex:'_UnformattedID',text:"ID"},
+                {dataIndex:'ScheduleState',text:"To State"},
+
                  {text:"From State", renderer : function(v,m,r) {
-                 	return r.get("_PreviousValues").State;
+                 	//return r.get("_PreviousValues").State;
+                    return r.get("_PreviousValues").ScheduleState;
                  }},
-                 {dataIndex:'State',text:"State"},
+                 //{dataIndex:'State',text:"State"},
+                 //{dataIndex:'ScheduleState',text:"State"},
                  {dataIndex:'Priority',text:"Priority"},
                  {dataIndex:'Severity',text:"Severity"},
                  {dataIndex:'_ValidFrom',text:"Valid From", renderer: function(value) {
                  	return Rally.util.DateTime.fromIsoString(value);
+                 }},
+                  {dataIndex:'_ValidTo',text:"Valid To", renderer: function(value) {
+                    return Rally.util.DateTime.fromIsoString(value);
                  }}
+
              ]
         });
 
@@ -35,15 +43,23 @@ Ext.define('CustomApp', {
     getSnapshotStore : function() {
 
         var that = this;
-        var fetch = ['ObjectID','_UnformattedID','State','Priority','Severity','_ItemHierarchy','_TypeHierarchy','_ValidFrom','_PreviousValues'];
-        var hydrate = ['_TypeHierarchy','State','Priority','Severity','_PreviousValues'];
+        var fetch = ['ObjectID','_UnformattedID','ScheduleState','State','Priority','Severity','_ItemHierarchy','_TypeHierarchy','_ValidFrom','_PreviousValues'];
+        var hydrate = ['_TypeHierarchy','State','Priority','Severity','_PreviousValues','ScheduleState'];
         
+        // var find = {
+        //         '_TypeHierarchy' : { "$in" : ["Defect","Task"]} ,
+        //         '_ProjectHierarchy' : { "$in": app.getContext().getProject().ObjectID },
+        //         'State' : "Open",
+        //         // '_PreviousValues.State' : { "$ne" : null}
+        //         '_PreviousValues.State' : { "$in" : ["Closed","Re-opened","Fixed"]}
+        // };
+
         var find = {
-                '_TypeHierarchy' : { "$in" : ["Defect","Task"]} ,
+                '_TypeHierarchy' : { "$in" : ["Defect","HierarchicalRequirement"]} ,
                 '_ProjectHierarchy' : { "$in": app.getContext().getProject().ObjectID },
-                'State' : "Open",
+                'ScheduleState' : "In-Progress",
                 // '_PreviousValues.State' : { "$ne" : null}
-                '_PreviousValues.State' : { "$in" : ["Closed","Re-opened","Fixed"]}
+                '_PreviousValues.ScheduleState' : { "$in" : ["Completed","Accepted"]}
         };
 
         var storeConfig = {
